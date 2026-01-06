@@ -1,5 +1,6 @@
 # five-card-draw Poker.
 import random
+from collections import Counter
 
 
 class Card:
@@ -108,7 +109,6 @@ class Hand:
 
 
     def check_value(self):
-
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
             return msg
@@ -121,6 +121,11 @@ class Hand:
         elif three_of_a_kind_value := self._check_three_of_a_kind():
             three_of_a_kind = Card.value_to_rank[three_of_a_kind_value]
             msg = f"Three of a kind {three_of_a_kind}s"
+            return msg
+        elif two_pair := self._check_two_pair():
+            low_pair = Card.value_to_rank[two_pair[0]]
+            high_pair = Card.value_to_rank[two_pair[1]]
+            msg = f"Two Pair, {high_pair}s and {low_pair}s."
             return msg
         elif pair_value := self._check_pair():
             pair = Card.value_to_rank[pair_value]
@@ -185,7 +190,29 @@ class Hand:
             return self.cards_in_hand[1].value
         elif self.cards_in_hand[2] == self.cards_in_hand[4]:
             return self.cards_in_hand[2].value
-        return None
+        return False
+
+    def _check_two_pair(self):
+        card_values = {}
+        for i in range(len(self.cards_in_hand)):
+            if self.cards_in_hand[i].value not in card_values:
+                card_values[self.cards_in_hand[i].value] = 1
+            else:
+                card_values[self.cards_in_hand[i].value] += 1
+
+        print(card_values)
+        pairs = []
+        for key, value in card_values.items():
+            if value == 2:
+                pairs.append(key)
+        pairs.sort()
+        print(pairs)
+        if len(pairs) == 2:
+            return pairs[0], pairs[1]
+        else:
+            return False
+
+
 
     def _check_pair(self):
         values = set()
