@@ -302,8 +302,8 @@ print("=" * 125)
 card1 = Card(8, "Hearts")
 card2 = Card(8, "Clubs")
 card3 = Card(7, "Spades")
-card4 = Card(8, "Hearts")
-card5 = Card(7, "Diamonds")
+card4 = Card(7, "Hearts")
+card5 = Card(6, "Diamonds")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 #sami.print_hand()
