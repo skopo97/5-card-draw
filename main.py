@@ -119,7 +119,9 @@ class Hand:
     def check_value(self):
         self.cards_in_hand.sort()
         values = self.get_hand_key_values()
+        ranks = [card.value for card in self.cards_in_hand]
 
+        print(ranks)
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
             return msg
@@ -202,7 +204,8 @@ class Hand:
             return self.cards_in_hand[2].value
         return False
 
-    def _check_two_pair(self, card_values):
+    @staticmethod
+    def _check_two_pair(card_values):
 
         pairs = []
         for key, value in card_values.items():
