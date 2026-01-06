@@ -1,6 +1,7 @@
 # five-card-draw Poker.
 import random
 
+
 class Card:
     value_to_rank = {
         2: "two",
@@ -104,8 +105,20 @@ class Hand:
         if 0 <= index < len(self.cards_in_hand):
             self.cards_in_hand.pop(index)
 
+    def get_hand_key_values(self):
+        card_values = {}
+        for i in range(len(self.cards_in_hand)):
+            if self.cards_in_hand[i].value not in card_values:
+                card_values[self.cards_in_hand[i].value] = 1
+            else:
+                card_values[self.cards_in_hand[i].value] += 1
+        return card_values
+
+
+
     def check_value(self):
         self.cards_in_hand.sort()
+        values = self.get_hand_key_values()
 
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
@@ -120,7 +133,7 @@ class Hand:
             three_of_a_kind = Card.value_to_rank[three_of_a_kind_value]
             msg = f"Three of a kind {three_of_a_kind}s"
             return msg
-        elif two_pair := self._check_two_pair():
+        elif two_pair := self._check_two_pair(values):
             low_pair = Card.value_to_rank[two_pair[0]]
             high_pair = Card.value_to_rank[two_pair[1]]
             msg = f"Two Pair, {high_pair}s and {low_pair}s."
@@ -189,15 +202,8 @@ class Hand:
             return self.cards_in_hand[2].value
         return False
 
-    def _check_two_pair(self):
-        card_values = {}
-        for i in range(len(self.cards_in_hand)):
-            if self.cards_in_hand[i].value not in card_values:
-                card_values[self.cards_in_hand[i].value] = 1
-            else:
-                card_values[self.cards_in_hand[i].value] += 1
+    def _check_two_pair(self, card_values):
 
-        print(card_values)
         pairs = []
         for key, value in card_values.items():
             if value == 2:
@@ -297,7 +303,7 @@ print("=" * 125)
 card1 = Card(4, "Hearts")
 card2 = Card(4, "Clubs")
 card3 = Card(7, "Spades")
-card4 = Card(6, "Hearts")
+card4 = Card(7, "Hearts")
 card5 = Card(8, "Diamonds")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
