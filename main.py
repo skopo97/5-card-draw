@@ -1,7 +1,5 @@
 # five-card-draw Poker.
 import random
-from collections import Counter
-
 
 class Card:
     value_to_rank = {
