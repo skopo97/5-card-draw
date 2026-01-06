@@ -106,8 +106,6 @@ class Hand:
         if 0 <= index < len(self.cards_in_hand):
             self.cards_in_hand.pop(index)
 
-
-
     def check_value(self):
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
@@ -168,16 +166,16 @@ class Hand:
     def _check_straight(self):
         self.cards_in_hand.sort()
 
-        #if five-high straight
+        # if five-high straight
         values = []
         for i in range(len(self.cards_in_hand)):
             values.insert(0, self.cards_in_hand[i].value)
         if values == [14, 5, 4, 3, 2]:
             return self.cards_in_hand[3].value
 
-        #for rest straights
+        # for rest straights
         for i in range(len(self.cards_in_hand) - 1):
-            if self.cards_in_hand[i+1].value - self.cards_in_hand[i].value != 1:
+            if self.cards_in_hand[i + 1].value - self.cards_in_hand[i].value != 1:
                 return False
         else:
             return self.cards_in_hand[4].value
@@ -211,8 +209,6 @@ class Hand:
             return pairs[0], pairs[1]
         else:
             return False
-
-
 
     def _check_pair(self):
         values = set()
@@ -306,5 +302,5 @@ card4 = Card(7, "Hearts")
 card5 = Card(6, "Diamonds")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
-#sami.print_hand()
+# sami.print_hand()
 p1.check_hand()
