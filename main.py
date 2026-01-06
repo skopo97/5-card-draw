@@ -105,6 +105,8 @@ class Hand:
             self.cards_in_hand.pop(index)
 
     def check_value(self):
+        self.cards_in_hand.sort()
+
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
             return msg
@@ -135,7 +137,6 @@ class Hand:
             return msg
 
     def _check_full_house(self):
-        self.cards_in_hand.sort()
 
         if self.cards_in_hand[0] == self.cards_in_hand[2]:
             if self.cards_in_hand[3] == self.cards_in_hand[4]:
@@ -162,9 +163,10 @@ class Hand:
         return suit
 
     def _check_straight(self):
-        self.cards_in_hand.sort()
 
         # if five-high straight
+        if self.cards_in_hand[0].value != 14:
+            return False
         values = []
         for i in range(len(self.cards_in_hand)):
             values.insert(0, self.cards_in_hand[i].value)
@@ -179,7 +181,6 @@ class Hand:
             return self.cards_in_hand[4].value
 
     def _check_three_of_a_kind(self):
-        self.cards_in_hand.sort()
         if self.cards_in_hand[0] == self.cards_in_hand[2]:
             return self.cards_in_hand[0].value
         elif self.cards_in_hand[1] == self.cards_in_hand[3]:
@@ -293,11 +294,11 @@ p1 = Player("John")
 print("=" * 125)
 
 # sami.receive_starting_hand(deck)
-card1 = Card(8, "Hearts")
-card2 = Card(8, "Clubs")
+card1 = Card(4, "Hearts")
+card2 = Card(4, "Clubs")
 card3 = Card(7, "Spades")
-card4 = Card(7, "Hearts")
-card5 = Card(6, "Diamonds")
+card4 = Card(6, "Hearts")
+card5 = Card(8, "Diamonds")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
