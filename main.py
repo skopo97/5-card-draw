@@ -268,7 +268,7 @@ class Player:
 
 
 deck = Deck()
-sami = Player("sami")
+p1 = Player("John")
 
 print("=" * 125)
 
@@ -279,6 +279,6 @@ card3 = Card(7, "Spades")
 card4 = Card(8, "Hearts")
 card5 = Card(7, "Diamonds")
 
-sami.hand.cards_in_hand = [card1, card2, card3, card4, card5]
+p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 #sami.print_hand()
-sami.check_hand()
+p1.check_hand()
