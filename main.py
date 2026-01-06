@@ -111,7 +111,6 @@ class Hand:
 
         if full_house := self._check_full_house():
             msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
-
             return msg
         elif flush := self._check_flush():
             msg = f"Flush of {flush}"
