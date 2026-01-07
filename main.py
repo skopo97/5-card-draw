@@ -121,9 +121,9 @@ class Hand:
         values = self.get_hand_key_values()
         ranks = [card.value for card in self.cards_in_hand]
 
-        print(ranks)
-        if full_house := self._check_full_house():
-            msg = f"{Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
+        if full_house := self._check_full_house(values):
+            three, pair = full_house
+            msg = f"{Card.value_to_rank[three]}s full of {Card.value_to_rank[pair]}s"
             return msg
         elif flush := self._check_flush():
             msg = f"Flush of {flush}"
@@ -151,16 +151,13 @@ class Hand:
             msg = f"Highcard, {high_card_rank} of {high_card_suit}"
             return msg
 
-    def _check_full_house(self):
-
-        if self.cards_in_hand[0] == self.cards_in_hand[2]:
-            if self.cards_in_hand[3] == self.cards_in_hand[4]:
-                return self.cards_in_hand[0].value, self.cards_in_hand[3].value
-        if self.cards_in_hand[2] == self.cards_in_hand[4]:
-            if self.cards_in_hand[0] == self.cards_in_hand[1]:
-                return self.cards_in_hand[2].value, self.cards_in_hand[0].value
-
-        return None
+    @staticmethod
+    def _check_full_house(values):
+        if sorted(values.values()) == [2,3]:
+            three = max(values, key=values.get)
+            pair = min(values, key=values.get)
+            return three,pair
+        return False
 
     def _check_flush(self):
         check_suit = []
@@ -307,7 +304,7 @@ card1 = Card(4, "Hearts")
 card2 = Card(4, "Clubs")
 card3 = Card(7, "Spades")
 card4 = Card(7, "Hearts")
-card5 = Card(8, "Diamonds")
+card5 = Card(7, "Diamonds")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
