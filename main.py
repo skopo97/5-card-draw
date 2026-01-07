@@ -1,5 +1,6 @@
 # five-card-draw Poker.
 import random
+from collections import Counter
 
 
 class Card:
@@ -114,59 +115,60 @@ class Hand:
                 card_values[self.cards_in_hand[i].value] += 1
         return card_values
 
-
-
     def check_value(self):
-        self.cards_in_hand.sort()
-        values = self.get_hand_key_values()
-        ranks = [card.value for card in self.cards_in_hand]
+        cards = [card for card in self.cards_in_hand]
+        cards.sort()
 
-        if full_house := self._check_full_house(values):
-            three, pair = full_house
-            msg = f"{Card.value_to_rank[three]}s full of {Card.value_to_rank[pair]}s"
+        if full_house := self._check_full_house(cards):
+            msg = f"Full House. {Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
             return msg
-        elif flush := self._check_flush():
+
+        elif flush := self._check_flush(cards):
             msg = f"Flush of {flush}"
             return msg
-        elif straight := self._check_straight():
-            msg = f"{Card.value_to_rank[straight]} high straight!"
+
+        elif straight := self._check_straight(cards):
+            msg = f"{straight} high straight"
             return msg
-        elif three_of_a_kind_value := self._check_three_of_a_kind():
-            three_of_a_kind = Card.value_to_rank[three_of_a_kind_value]
-            msg = f"Three of a kind {three_of_a_kind}s"
+
+        elif three_of_a_kind := self._check_three_of_a_kind(cards):
+            msg = f"Three of kind, {Card.value_to_rank[three_of_a_kind]}'s"
             return msg
-        elif two_pair := self._check_two_pair(values):
-            low_pair = Card.value_to_rank[two_pair[0]]
-            high_pair = Card.value_to_rank[two_pair[1]]
-            msg = f"Two Pair, {high_pair}s and {low_pair}s."
+
+        elif two_pair := self._check_two_pair(cards):
+            msg = f"Two pairs, {Card.value_to_rank[two_pair[1]]}'s and {Card.value_to_rank[two_pair[0]]}'s"
             return msg
-        elif pair_value := self._check_pair():
-            pair = Card.value_to_rank[pair_value]
-            msg = f"Pair of {pair}"
+
+        elif pair := self._check_pair(cards):
+            msg = f"Pair of {Card.value_to_rank[pair]}s"
             return msg
         else:
-            high_card = self._check_high_card()
+            high_card = self._check_high_card(cards)
             high_card_rank = Card.value_to_rank[high_card.value]
             high_card_suit = high_card.get_suit()
-            msg = f"Highcard, {high_card_rank} of {high_card_suit}"
+            msg = f"High card, {high_card_rank} of {high_card_suit}"
             return msg
 
     @staticmethod
-    def _check_full_house(values):
-        if sorted(values.values()) == [2,3]:
-            three = max(values, key=values.get)
-            pair = min(values, key=values.get)
-            return three,pair
+    def _check_full_house(cards):
+        values = [card.value for card in cards]
+        value_count = Counter(values)
+
+        if sorted(value_count.values()) == [2, 3]:
+            three = max(value_count, key=value_count.get)
+            pair = min(value_count, key=value_count.get)
+            return three, pair
         return False
 
-    def _check_flush(self):
+    @staticmethod
+    def _check_flush(cards):
         check_suit = []
-        card = self.cards_in_hand[0]
+        card = cards[0]
         card_suit = card.get_suit()
         check_suit.append(card_suit)
 
-        for i in range(1, len(self.cards_in_hand)):
-            card = self.cards_in_hand[i]
+        for i in range(1, len(cards)):
+            card = cards[i]
             card_suit = card.get_suit()
 
             if card_suit not in check_suit:
@@ -174,68 +176,65 @@ class Hand:
         suit = card.get_suit()
         return suit
 
-    def _check_straight(self):
+    @staticmethod
+    def _check_straight(cards):
 
-        # if five-high straight
-        if self.cards_in_hand[0].value != 14:
-            return False
+        # For 5 high straights
         values = []
-        for i in range(len(self.cards_in_hand)):
-            values.insert(0, self.cards_in_hand[i].value)
+        for i in range(len(cards)):
+            values.insert(0, cards[i].value)
         if values == [14, 5, 4, 3, 2]:
-            return self.cards_in_hand[3].value
+            return cards[3].value
 
         # for rest straights
-        for i in range(len(self.cards_in_hand) - 1):
-            if self.cards_in_hand[i + 1].value - self.cards_in_hand[i].value != 1:
+        for i in range(len(cards) - 1):
+            if cards[i + 1].value - cards[i].value != 1:
                 return False
         else:
-            return self.cards_in_hand[4].value
+            return cards[4].value
 
-    def _check_three_of_a_kind(self):
-        if self.cards_in_hand[0] == self.cards_in_hand[2]:
-            return self.cards_in_hand[0].value
-        elif self.cards_in_hand[1] == self.cards_in_hand[3]:
-            return self.cards_in_hand[1].value
-        elif self.cards_in_hand[2] == self.cards_in_hand[4]:
-            return self.cards_in_hand[2].value
+    @staticmethod
+    def _check_three_of_a_kind(cards):
+        values = [card.value for card in cards]
+        value_count = Counter(values)
+
+        if 3 in value_count.values():
+            three_cards = max(value_count, key=value_count.get)
+            return three_cards
         return False
 
     @staticmethod
-    def _check_two_pair(card_values):
+    def _check_two_pair(cards):
+        values = [card.value for card in cards]
+        value_count = Counter(values)
 
         pairs = []
-        for key, value in card_values.items():
+        for key, value in value_count.items():
             if value == 2:
                 pairs.append(key)
         pairs.sort()
-        print(pairs)
         if len(pairs) == 2:
+            pairs.sort()
             return pairs[0], pairs[1]
         else:
             return False
 
-    def _check_pair(self):
+    @staticmethod
+    def _check_pair(cards):
         values = set()
-        for i in range(len(self.cards_in_hand)):
-            card = self.cards_in_hand[i]
+        for i in range(len(cards)):
+            card = cards[i]
             card_value = card.get_value()
             if card_value not in values:
                 values.add(card_value)
                 continue
             else:
                 return card.value
-
         return False
 
-    def _check_high_card(self):
-
-        highest_card = self.cards_in_hand[0]
-        for card in self.cards_in_hand:
-            if card.value > highest_card.value:
-                highest_card = card
-        # suit = highest_card.get_suit()
-        return highest_card
+    @staticmethod
+    def _check_high_card(cards):
+        return cards[-1]
 
     def __str__(self):
         result = ""
@@ -300,11 +299,11 @@ p1 = Player("John")
 print("=" * 125)
 
 # sami.receive_starting_hand(deck)
-card1 = Card(4, "Hearts")
-card2 = Card(4, "Clubs")
-card3 = Card(7, "Spades")
-card4 = Card(7, "Hearts")
-card5 = Card(7, "Diamonds")
+card1 = Card(5, "Hearts")
+card2 = Card(6, "Diamonds")
+card3 = Card(8, "Spades")
+card4 = Card(9, "Spades")
+card5 = Card(14, "Hearts")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
