@@ -64,9 +64,9 @@ class Deck:
     @staticmethod
     def generate_deck():
         generated_deck = []
-        for i in range(1, 5):  # Loop from 1 to 4, representing suit.
-            for j in range(2, 15):  # Loop from 1 to 15, representing value of the card
-                card = Card(j, Deck.number_to_suit[i])
+        for suit_num in Deck.number_to_suit:
+            for value_num in Card.value_to_rank:
+                card = Card(value_num, Deck.number_to_suit[suit_num])
                 generated_deck.append(card)
         return generated_deck
 
