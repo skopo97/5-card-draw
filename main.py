@@ -119,7 +119,11 @@ class Hand:
         cards = [card for card in self.cards_in_hand]
         cards.sort()
 
-        if full_house := self._check_full_house(cards):
+        if four_of_a_kind := self._check_four_of_a_kind(cards):
+            msg = f"Four of a kind! {Card.value_to_rank[four_of_a_kind]}s"
+            return msg
+
+        elif full_house := self._check_full_house(cards):
             msg = f"Full House. {Card.value_to_rank[full_house[0]]}s full of {Card.value_to_rank[full_house[1]]}s"
             return msg
 
@@ -149,6 +153,15 @@ class Hand:
             msg = f"High card, {high_card_rank} of {high_card_suit}"
             return msg
 
+    @staticmethod
+    def _check_four_of_a_kind(cards):
+        values = [card.value for card in cards]
+        value_count = Counter(values)
+
+        if 4 in value_count.values():
+            four_cards = max(value_count, key=value_count.get)
+            return four_cards
+        return False
     @staticmethod
     def _check_full_house(cards):
         values = [card.value for card in cards]
@@ -300,9 +313,9 @@ print("=" * 125)
 
 # sami.receive_starting_hand(deck)
 card1 = Card(5, "Hearts")
-card2 = Card(6, "Diamonds")
-card3 = Card(8, "Spades")
-card4 = Card(9, "Spades")
+card2 = Card(14, "Diamonds")
+card3 = Card(14, "Spades")
+card4 = Card(14, "Clubs")
 card5 = Card(14, "Hearts")
 
 p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
