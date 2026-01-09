@@ -1,5 +1,6 @@
 # five-card-draw Poker.
 import random
+import time
 from collections import Counter
 
 
@@ -162,6 +163,7 @@ class Hand:
             four_cards = max(value_count, key=value_count.get)
             return four_cards
         return False
+
     @staticmethod
     def _check_full_house(cards):
         values = [card.value for card in cards]
@@ -266,7 +268,15 @@ class Player:
     def receive_starting_hand(self, deck):
         for i in range(1, 6):
             card = deck.draw_card()
+            print("Drawing card....")
+            time.sleep(0.5)
+            print(f"Card drawn {card}")
             self.hand.add_card(card)
+
+        starting_hand = self.get_hand()
+        hand_string = ", ".join(map(str, starting_hand))
+
+        print(f"You starting hand is \n{hand_string}")
 
     def exchange_card(self, deck):
         if self.exchanged_cards:
@@ -299,11 +309,18 @@ class Player:
 
     def print_hand(self):
         for card in self.hand.cards_in_hand:
-            print(card)
+            print(card, end=", ")
+
+    def get_hand(self):
+        hand = []
+        for card in self.hand.cards_in_hand:
+            hand.append(card)
+
+        return hand
 
     def check_hand(self):
         result = self.hand.check_value()
-        print(result)
+        return result
 
 
 deck = Deck()
@@ -311,13 +328,13 @@ p1 = Player("John")
 
 print("=" * 125)
 
-# sami.receive_starting_hand(deck)
-card1 = Card(5, "Hearts")
-card2 = Card(14, "Diamonds")
-card3 = Card(14, "Spades")
-card4 = Card(14, "Clubs")
-card5 = Card(14, "Hearts")
+p1.receive_starting_hand(deck)
+# card1 = Card(5, "Hearts")
+# card2 = Card(14, "Diamonds")
+# card3 = Card(14, "Spades")
+# card4 = Card(14, "Clubs")
+# card5 = Card(14, "Hearts")
 
-p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
+# p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
-p1.check_hand()
+#print(p1.check_hand())
