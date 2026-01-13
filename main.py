@@ -120,7 +120,11 @@ class Hand:
         cards = [card for card in self.cards_in_hand]
         cards.sort()
 
-        if four_of_a_kind := self._check_four_of_a_kind(cards):
+        if straight_flush := self._check_straight_flush(cards):
+            msg = f"Straight flush! {Card.value_to_rank[straight_flush[1]]}-high straight flush, {straight_flush[0]}"
+            return msg
+
+        elif four_of_a_kind := self._check_four_of_a_kind(cards):
             msg = f"Four of a kind! {Card.value_to_rank[four_of_a_kind]}s"
             return msg
 
@@ -153,6 +157,17 @@ class Hand:
             high_card_suit = high_card.get_suit()
             msg = f"High card, {high_card_rank} of {high_card_suit}"
             return msg
+
+    @staticmethod
+    def _check_straight_flush(cards):
+        flush_suit = Hand._check_flush(cards)
+        straight_high_card = Hand._check_straight(cards)
+
+        if flush_suit and straight_high_card:
+            return flush_suit, straight_high_card
+
+        return False
+
 
     @staticmethod
     def _check_four_of_a_kind(cards):
@@ -195,11 +210,9 @@ class Hand:
     def _check_straight(cards):
 
         # For 5 high straights
-        values = []
-        for i in range(len(cards)):
-            values.insert(0, cards[i].value)
-        if values == [14, 5, 4, 3, 2]:
-            return cards[3].value
+        values = [c.value for c in cards]
+        if values == [2,3,4,5,14]:
+            return 5
 
         # for rest straights
         for i in range(len(cards) - 1):
@@ -328,13 +341,13 @@ p1 = Player("John")
 
 print("=" * 125)
 
-p1.receive_starting_hand(deck)
-# card1 = Card(5, "Hearts")
-# card2 = Card(14, "Diamonds")
-# card3 = Card(14, "Spades")
-# card4 = Card(14, "Clubs")
-# card5 = Card(14, "Hearts")
+#p1.receive_starting_hand(deck)
+card1 = Card(14, "Hearts")
+card2 = Card(2, "Hearts")
+card3 = Card(3, "Hearts")
+card4 = Card(4, "Hearts")
+card5 = Card(5, "Hearts")
 
-# p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
+p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
-#print(p1.check_hand())
+print(p1.check_hand())
