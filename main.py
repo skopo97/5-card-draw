@@ -100,6 +100,10 @@ class Hand:
     def __init__(self):
         self.cards_in_hand = []
 
+    def sort_cards_in_hand(self):
+        self.cards_in_hand = sorted(self.cards_in_hand)
+        return self.cards_in_hand
+
     def add_card(self, card):
         self.cards_in_hand.append(card)
 
@@ -166,7 +170,7 @@ class Hand:
     def _check_royal_flush(cards):
 
         values = [c.value for c in cards]
-        if values != [10,11,12,13,14]:
+        if values != [10, 11, 12, 13, 14]:
             return False
         flush_suit = Hand._check_flush(cards)
 
@@ -183,7 +187,6 @@ class Hand:
             return flush_suit, straight_high_card
 
         return False
-
 
     @staticmethod
     def _check_four_of_a_kind(cards):
@@ -227,7 +230,7 @@ class Hand:
 
         # For 5 high straights
         values = [c.value for c in cards]
-        if values == [2,3,4,5,14]:
+        if values == [2, 3, 4, 5, 14]:
             return 5
 
         # for rest straights
@@ -287,6 +290,12 @@ class Hand:
 
         return result[:-2]
 
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
 
 class Player:
     def __init__(self, name):
@@ -295,17 +304,18 @@ class Player:
         self.exchanged_cards = False
 
     def receive_starting_hand(self, deck):
+        print(f"Drawing cards.... for player {self.name}")
         for i in range(1, 6):
             card = deck.draw_card()
-            print("Drawing card....")
+
             time.sleep(0.5)
             print(f"Card drawn {card}")
             self.hand.add_card(card)
 
-        starting_hand = self.get_hand()
-        hand_string = ", ".join(map(str, starting_hand))
+        # starting_hand = self.get_hand()
+        # hand_string = ", ".join(map(str, starting_hand))
 
-        print(f"You starting hand is \n{hand_string}")
+        # print(f"You starting hand is \n{hand_string}")
 
     def exchange_card(self, deck):
         if self.exchanged_cards:
@@ -313,7 +323,10 @@ class Player:
         else:
             current_hand = self.hand
             cards_to_change = input(
-                f"{current_hand}\nWhich cards would you like to exchange? (Input as xxx, eq. 123 for cards 1, 2 and 3) or 1 for card 1\n: ")
+                f"{current_hand}\nWhich cards would you like to exchange? (Input as xxx, eq. 123 for cards 1, 2 and 3) or 1 for card 1 or 0 to cancel\n: ")
+
+            if cards_to_change == 0:
+                return None
 
             # Get the indexes to remove
             indexes_to_remove = set()
@@ -357,13 +370,17 @@ p1 = Player("John")
 
 print("=" * 125)
 
-#p1.receive_starting_hand(deck)
-card1 = Card(14, "Hearts")
-card2 = Card(13, "Hearts")
-card3 = Card(12, "Hearts")
-card4 = Card(11, "Hearts")
-card5 = Card(10, "Hearts")
+p1.receive_starting_hand(deck)
+print("Sorting cards")
+p1.hand.sort_cards_in_hand()
+p1.print_hand()
+# p1.exchange_card(deck)
+# card1 = Card(14, "Hearts")
+# card2 = Card(13, "Hearts")
+# card3 = Card(12, "Hearts")
+# card4 = Card(11, "Hearts")
+# card5 = Card(10, "Hearts")
 
-p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
+# p1.hand.cards_in_hand = [card1, card2, card3, card4, card5]
 # sami.print_hand()
-print(p1.check_hand())
+# print(p1.check_hand())
